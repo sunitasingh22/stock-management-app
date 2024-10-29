@@ -1,0 +1,11 @@
+.fade:not(.show) {
+    opacity: 5;
+}
+
+.modal-content {
+    margin-top: 60px !important;
+}
+
+.submitBtn {
+    margin-top: 20px;
+}

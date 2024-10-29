@@ -1,0 +1,29 @@
+/* Style for Logout Button */
+.logout-button {
+    border-radius: 20px;
+    font-weight: 500;
+    color: #6c757d;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+/* Container styling */
+.container {
+    padding-top: 1.5rem;
+}
+
+/* Table styling */
+.table {
+    margin-top: 1.5rem;
+}
+
+/* Grand Total styling */
+h5 {
+    color: #495057;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}

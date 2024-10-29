@@ -1,0 +1,31 @@
+<div *ngIf="successMessage" class="container success-message">
+    {{ successMessage }}
+</div>
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="w-100 p-4 border rounded shadow-sm bg-light"
+        style="max-width: 400px;">
+
+        <h3 class="mb-3 text-center">Login</h3>
+
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input id="username" formControlName="username" type="text" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input id="password" formControlName="password" type="password" class="form-control" required>
+        </div>
+
+        <!-- Error Message Display -->
+        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+            {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+
+        <!-- Link to the signup page -->
+        <p>Don't have an account?<button (click)="register()">Signup</button></p>
+    </form>
+</div>

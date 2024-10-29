@@ -1,0 +1,51 @@
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4>My Dashboard</h4>
+        <button class="btn btn-outline-secondary logout-button" (click)="logout()">Logout</button>
+    </div>
+
+    <div class="mb-3">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#addStockModal" (click)="openStockModal()">
+            Buy Stock
+        </button>
+    </div>
+
+    <app-add-stock-modal (stockAdded)="addStockData($event)"></app-add-stock-modal>
+
+    <!-- Grand Total Display -->
+    <div *ngIf="portfolios.length > 0">
+        <h5>Grand Total Value: {{ getGrandTotal() | currency:'GBP' }}</h5>
+    </div>
+
+    <table class="table table-striped" *ngIf="portfolios.length > 0; else noData">
+        <thead>
+            <tr>
+                <th scope="col">Stock Id</th>
+                <th scope="col">Stock Name</th>
+                <th scope="col">Stock Symbol</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Current Value</th>
+                <th scope="col">Total Value</th>
+                <th scope="col">Actions</th> <!-- New column for actions -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let portfolio of portfolios">
+                <td>{{portfolio.stock.id}}</td>
+                <td>{{portfolio.stock.name}}</td>
+                <td>{{portfolio.stock.symbol}}</td>
+                <td>{{portfolio.quantity}}</td>
+                <td>{{portfolio.livePrice || 'Loading...'}}</td>
+                <td>{{portfolio.totalValue || 'Calculating...'}}</td>
+                <td>
+                    <button class="btn btn-danger" (click)="removeStockData(portfolio.stock.id)">Sell</button>
+                    <!-- Remove button -->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ng-template #noData>
+        <p>No data available to display.</p>
+    </ng-template>
+</div>
