@@ -25,7 +25,6 @@ export class PortfolioService {
   }
 
   // Remove stock from portfolio by stock ID
-
   removeStockData(userId: number, stockId: number): Observable<string> {
     return this._httpClient.delete(`${this.stockUrl}/${userId}/${stockId}`, { responseType: 'text' });
   }

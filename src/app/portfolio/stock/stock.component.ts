@@ -65,6 +65,7 @@ export class StockComponent implements OnInit {
 
   addStockData(stockData: any) {
     if (this.userId !== null) {
+      console.log('Stock data received from modal:', stockData);
       this.portfolioService.addStock(this.userId, stockData).subscribe(() => {
         this.fetchAllStocksfromPortfolio(); // Refresh the portfolio
       });
