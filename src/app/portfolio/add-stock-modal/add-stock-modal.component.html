@@ -16,8 +16,8 @@
                         <select id="symbol" class="form-control" formControlName="symbol" (change)="onSymbolChange()"
                             required>
                             <option value="" disabled selected>Select a stock</option>
-                            <option *ngFor="let stock of stocks" [value]="stock.symbol">{{ stock.name }} ({{
-                                stock.symbol }})</option>
+                            <option *ngFor="let stock of stocks" [ngValue]="stock">{{stock.id}} {{ stock.name }}
+                                ({{ stock.symbol }})</option>
                         </select>
                         <div *ngIf="hasError('symbol', 'required')">Symbol is required.</div>
                     </div>

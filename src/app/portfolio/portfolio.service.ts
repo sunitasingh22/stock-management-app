@@ -20,13 +20,13 @@ export class PortfolioService {
   }
 
   // Add stock to portfolio
-  addStock(userId: number, stock: InsertStockRequest): Observable<void> {
-    return this._httpClient.post<void>(`${this.stockUrl}/${userId}`, stock);
+  addStock(userId: number, stockId: number, stock: InsertStockRequest): Observable<void> {
+    return this._httpClient.post<void>(`${this.stockUrl}/${userId}/${stockId}`, stock);
   }
 
   // Remove stock from portfolio by stock ID
-  removeStockData(userId: number, stockId: number): Observable<string> {
-    return this._httpClient.delete(`${this.stockUrl}/${userId}/${stockId}`, { responseType: 'text' });
+  removeStockData(userId: number, stockId: number, quantity: number): Observable<string> {
+    return this._httpClient.put<string>(`${this.stockUrl}/${userId}/${stockId}/${quantity}`, null);
   }
 
 }

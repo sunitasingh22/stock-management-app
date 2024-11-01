@@ -22,6 +22,12 @@ export class StockComponent implements OnInit {
 
   userId: number | null = null;
 
+  // Variables for selling stock
+  sellStockId: number | null = null;
+  sellStockSymbol: string = '';
+  sellStockName: string = '';
+  sellQuantity: number = 0;
+
   constructor(private portfolioService: PortfolioService, private livePriceService: LivepriceService, private router: Router) { }
 
   portfolios: Portfolio[] = [];
@@ -41,7 +47,7 @@ export class StockComponent implements OnInit {
     if (this.userId !== null) {
       this.portfolioService.fetchAllStocksByUserId(this.userId).subscribe((data) => {
         console.log("Fetched data:", data);
-        this.portfolios = data;
+        this.portfolios = data.filter(portfolio => portfolio.quantity > 0);
         this.fetchLivePrices();
       });
     }
@@ -66,26 +72,34 @@ export class StockComponent implements OnInit {
   addStockData(stockData: any) {
     if (this.userId !== null) {
       console.log('Stock data received from modal:', stockData);
-      this.portfolioService.addStock(this.userId, stockData).subscribe(() => {
-        this.fetchAllStocksfromPortfolio(); // Refresh the portfolio
-      });
+
+      const stock = this.stocks.find(s => s.symbol === stockData.symbol);
+      if (stockData) {
+        this.portfolioService.addStock(this.userId, stockData.id, { // Pass the stockId
+          symbol: stockData.symbol,
+          name: stockData.name,
+          quantity: stockData.quantity
+        }).subscribe(() => {
+          this.fetchAllStocksfromPortfolio(); // Refresh the portfolio
+        });
+      }
     }
   }
 
-  removeStockData(stockId: number): void {
-    if (this.userId !== null) {
-      this.portfolioService.removeStockData(this.userId, stockId).subscribe({
-        next: () => {
-          console.log('Stock removed successfully');
-          //  this.stocks = this.stocks.filter(stock => stock.id !== stockId); // Remove from UI
-          this.fetchAllStocksfromPortfolio(); // Refresh the portfolio
-        },
-        error: (error) => {
-          console.error('Error removing stock', error);
-        }
-      });
-    }
-  }
+  /* removeStockData(stockId: number): void {
+     if (this.userId !== null) {
+       this.portfolioService.removeStockData(this.userId, stockId).subscribe({
+         next: () => {
+           console.log('Stock removed successfully');
+           //  this.stocks = this.stocks.filter(stock => stock.id !== stockId); // Remove from UI
+           this.fetchAllStocksfromPortfolio(); // Refresh the portfolio
+         },
+         error: (error) => {
+           console.error('Error removing stock', error);
+         }
+       });
+     }
+   }*/
 
   getGrandTotal(): number {
     return this.portfolios
@@ -110,6 +124,64 @@ export class StockComponent implements OnInit {
   logout() {
     localStorage.removeItem('userId');
     this.router.navigate(['/portfolio/login']);
+  }
+
+
+  // Method to open the sell modal
+  openSellModal(stockId: number, stockName: string, stockSymbol: string): void {
+    this.sellStockId = stockId; // ID of the stock being sold
+    this.sellStockSymbol = stockSymbol; // Symbol of the stock
+    this.sellStockName = stockName; // Name of the stock
+    this.sellQuantity = 0; // Initialize the quantity to 0
+    const modal = document.getElementById("sellStockModal");
+    if (modal) {
+      modal.style.display = "block"; // Show the modal
+    }
+  }
+
+  closeSellModal(): void {
+    const modal = document.getElementById("sellStockModal");
+    if (modal != null) {
+      modal.style.display = "none"; // Hide the modal
+    }
+  }
+
+  sellStock(): void {
+    if (this.userId !== null && this.sellStockId !== null) {
+
+      const quantityToSell = this.sellQuantity;
+      const portfolio = this.portfolios.find(p => p.stock.id === this.sellStockId);
+
+
+
+
+      if (portfolio && quantityToSell > 0 && quantityToSell <= portfolio.quantity) {
+        // Show a confirmation alert
+        const userConfirmed = confirm(`Are you sure you want to sell ${this.sellQuantity} units of ${portfolio.stock.name} (${portfolio.stock.symbol})?`);
+
+        if (!userConfirmed) {
+          return; // Exit if the user cancels the action
+        }
+
+        this.portfolioService.removeStockData(this.userId, this.sellStockId, this.sellQuantity).subscribe({
+          next: () => {
+            console.log('Stock sold successfully');
+            this.fetchAllStocksfromPortfolio();
+            this.closeSellModal();
+          },
+          error: (error) => {
+            console.error('Error selling stock', error);
+          }
+        });
+      } else {
+        alert('Quantity must be greater than 0 and less than or equal to the current quantity.');
+      }
+    }
+  }
+
+  getCurrentStockQuantity(stockId: number): number {
+    const portfolio = this.portfolios.find(p => p.stock.id === stockId);
+    return portfolio ? portfolio.quantity : 0;
   }
 
 

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 interface StockList {
+  id: number;
   symbol: string;
   name: string;
 }

@@ -20,7 +20,7 @@
     <table class="table table-striped" *ngIf="portfolios.length > 0; else noData">
         <thead>
             <tr>
-                <th scope="col">Stock Id</th>
+                <!-- <th scope="col">Stock Id</th>-->
                 <th scope="col">Stock Name</th>
                 <th scope="col">Stock Symbol</th>
                 <th scope="col">Quantity</th>
@@ -31,14 +31,19 @@
         </thead>
         <tbody>
             <tr *ngFor="let portfolio of portfolios">
-                <td>{{portfolio.stock.id}}</td>
+                <!-- <td>{{portfolio.stock.id}}</td>-->
                 <td>{{portfolio.stock.name}}</td>
                 <td>{{portfolio.stock.symbol}}</td>
                 <td>{{portfolio.quantity}}</td>
                 <td>{{portfolio.livePrice || 'Loading...'}}</td>
                 <td>{{portfolio.totalValue || 'Calculating...'}}</td>
                 <td>
-                    <button class="btn btn-danger" (click)="removeStockData(portfolio.stock.id)">Sell</button>
+                    <button class="btn btn-danger"
+                        (click)="openSellModal(portfolio.stock.id, portfolio.stock.name, portfolio.stock.symbol)"
+                        data-toggle="modal" data-target="#sellStockModal">
+                        Sell
+                    </button>
+                    <!-- <button class="btn btn-danger" (click)="removeStockData(portfolio.stock.id)">Sell</button>-->
                     <!-- Remove button -->
                 </td>
             </tr>
@@ -48,4 +53,34 @@
     <ng-template #noData>
         <p>No data available to display.</p>
     </ng-template>
+</div>
+
+
+<!-- Sell Stock Modal -->
+<div class="modal fade" id="sellStockModal" tabindex="-1" role="dialog" aria-labelledby="sellStockModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sellStockModalLabel">Sell Stock</h5>
+                <button type="button" class="close" (click)="closeSellModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Name:</strong> {{ sellStockName }}</p>
+                <p><strong>Symbol:</strong> {{ sellStockSymbol }}</p>
+                <div class="form-group">
+                    <label for="sellQuantity">Quantity to Sell:</label>
+                    <input type="number" id="sellQuantity" class="form-control" [(ngModel)]="sellQuantity" min="0"
+                        [max]="getCurrentStockQuantity(sellStockId ?? 0)" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeSellModal()">Close</button>
+                <button type="button" class="btn btn-primary" (click)="sellStock()"
+                    [disabled]="sellQuantity <= 0 || sellQuantity > getCurrentStockQuantity(sellStockId ?? 0)">Sell</button>
+            </div>
+        </div>
+    </div>
 </div>
