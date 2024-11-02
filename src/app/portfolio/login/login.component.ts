@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserService } from '../../user.service';
 import { NgIf } from '@angular/common';
+import { Users } from '../../users';
 
 @Component({
   selector: 'app-login',
@@ -31,18 +32,16 @@ export class LoginComponent implements OnInit {
     })
   }
 
-
-
   onSubmit(): void {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
 
       this.userService.login(username, password).subscribe({
-        next: (response: { message: string; userId: string }) => {
+        next: (response: Users) => {
           console.log('Login successful:', response);  // Log the response
 
-          if (response.userId) {
-            localStorage.setItem('userId', response.userId); // Store userId in local storage
+          if (response.id) {
+            localStorage.setItem('userId', response.id.toString()); // Store userId in local storage
             this.router.navigate(['/portfolio/home']);  // Redirect after login
           } else {
             console.error('User ID is undefined in response');

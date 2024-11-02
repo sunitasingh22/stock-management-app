@@ -16,8 +16,7 @@ export class UserService {
   login(username: string, password: string): Observable<any> {
     const payload = { username, password };
     return this._httpClient.post(`${this.UserUrl}/login`, payload, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-      responseType: 'json'
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     });
   }
 
